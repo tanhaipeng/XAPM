@@ -1,0 +1,9 @@
+{
+  "Port": "8010",
+  "Logpath": "xapmsrv.log",
+  "Version": "1.0",
+  "Author": {
+    "Name": "tanhaipeng",
+    "Email": "tan_haipeng@126.com"
+  }
+}
