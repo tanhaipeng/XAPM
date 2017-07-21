@@ -6,10 +6,10 @@
 
 package main
 
-import "fmt"
 import (
-	"github.com/go-ozzo/ozzo-log"
 	"github.com/go-ozzo/ozzo-config"
+	"github.com/go-ozzo/ozzo-log"
+	"fmt"
 )
 
 var confPath string
@@ -19,11 +19,11 @@ var logger *log.Logger
 func init() {
 	confPath = "config.json"
 	conf = initConf()
-	logger = initLogger(conf.GetString("Logpath", "xapmsrv.log"))
+	logger = initLogger(conf.GetString("Logpath", "log/xapmsrv.log"))
 }
 
 func main() {
 	fmt.Println("XAPM SERVER START")
-	logger.Debug("XAPM SERVER START")
+	logger.Notice("XAPM SERVER START")
 	defer logger.Close()
 }
