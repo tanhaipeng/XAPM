@@ -7,7 +7,11 @@
 package main
 
 import "github.com/go-ozzo/ozzo-config"
-import "github.com/go-ozzo/ozzo-log"
+import (
+	"github.com/go-ozzo/ozzo-log"
+	"path/filepath"
+	"os"
+)
 
 func initConf() *config.Config {
 	conf := config.New()
@@ -15,11 +19,15 @@ func initConf() *config.Config {
 	return conf
 }
 
-func initLogger(path string) *log.Logger {
+func initLogger(logPath string) *log.Logger {
+	fileDir := filepath.Dir(logPath)
+	if fileDir != "" {
+		os.Mkdir(fileDir, 0777)
+	}
 	logger = log.NewLogger()
 	t1 := log.NewConsoleTarget()
 	t2 := log.NewFileTarget()
-	t2.FileName = path
+	t2.FileName = logPath
 	t2.MaxLevel = log.LevelError
 	logger.Targets = append(logger.Targets, t1, t2)
 	return logger

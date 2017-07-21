@@ -25,7 +25,5 @@ func init() {
 func main() {
 	fmt.Println("XAPM SERVER START")
 	logger.Debug("XAPM SERVER START")
-	if logger != nil {
-		logger.Close()
-	}
+	defer logger.Close()
 }

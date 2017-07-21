@@ -1,6 +1,6 @@
 {
   "Port": "8010",
-  "Logpath": "xapmsrv.log",
+  "Logpath": "log/xapmsrv.log",
   "Version": "1.0",
   "Author": {
     "Name": "tanhaipeng",
