@@ -1,7 +1,7 @@
 /*
  * Copyright 2017 XAPM Author. All Rights Reserved.
  * XAPM TCP Server Drivered by Golang
- * 2017/7/21, by Tan Haipeng, create
+ * 2017/7/21, by AllinGoo, create
  */
 
 package main
