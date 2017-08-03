@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-func initConf() *config.Config {
+func initConf(confPath string) *config.Config {
 	conf := config.New()
 	conf.Load(confPath)
 	return conf

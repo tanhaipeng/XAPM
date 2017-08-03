@@ -12,13 +12,11 @@ import (
 	"fmt"
 )
 
-var confPath string
 var conf *config.Config
 var logger *log.Logger
 
 func init() {
-	confPath = "config.json"
-	conf = initConf()
+	conf = initConf("config.json")
 	logger = initLogger(conf.GetString("Logpath", "log/xapmsrv.log"))
 }
 
