@@ -22,6 +22,7 @@ func init() {
 
 func main() {
 	fmt.Println("XAPM SERVER START")
-	logger.Notice("XAPM SERVER START")
+	strPort := conf.GetString("Port", "8010")
+	startServer(strPort)
 	defer logger.Close()
 }

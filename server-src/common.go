@@ -11,6 +11,9 @@ import (
 	"github.com/go-ozzo/ozzo-config"
 	"path/filepath"
 	"os"
+	"net"
+	"fmt"
+	"io/ioutil"
 )
 
 func initConf(confPath string) *config.Config {
@@ -32,4 +35,40 @@ func initLogger(logPath string) *log.Logger {
 	logger.Targets = append(logger.Targets, t1, t2)
 	logger.Open()
 	return logger
+}
+
+func startServer(port string) {
+	listen, err := net.Listen("tcp", "0.0.0.0:"+port)
+	if err != nil {
+		fmt.Printf(err.Error())
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+	defer listen.Close()
+	fmt.Printf("TCP Server listening on 0.0.0.0:%s\n", port)
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			logger.Error(err.Error())
+		} else {
+			go handleRequest(conn)
+		}
+	}
+}
+
+func handleRequest(conn net.Conn) {
+	defer conn.Close()
+	buf, err := ioutil.ReadAll(conn)
+	if err != nil {
+		logger.Error(err.Error())
+		conn.Write([]byte("fail"))
+	} else {
+		decodePbData(buf)
+		conn.Write([]byte("succ"))
+	}
+}
+
+func decodePbData(data []byte) bool {
+	logger.Info("decode protobuf data")
+	return true
 }
