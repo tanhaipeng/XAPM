@@ -11,7 +11,7 @@ install:
   - go get github.com/go-ozzo/ozzo-log
 
 script:
-  - sh srv-src/build.sh
+  - cd srv-src; sh build.sh
 
 notifications:
   email: false
