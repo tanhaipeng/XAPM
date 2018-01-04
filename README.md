@@ -54,3 +54,6 @@ sh build.sh
 #推荐使用supervisor，可以用下面方式测试
 nohup ./xserver &
 ```
+
+### Trace效果
+![](screenshot/s1.png)
