@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tanhaipeng/XAPM.svg?branch=master)](https://travis-ci.org/tanhaipeng/XAPM)
+
 ## XAPM : An extension for PHP Trace
 
 > 为了更好的跟踪PHP执行链路开发此扩展，传统跟踪方法需要在代码层加入Log信息从而获得链路信息，而且不同框架之间的Log方法也不一定能有效兼容。我们扩展的优点是代码层无需修改，启用so扩展后可自动获取代码执行链路，实现开发框架与Trace信息获取的解耦。
