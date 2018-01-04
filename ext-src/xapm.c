@@ -148,9 +148,7 @@ PHP_MINFO_FUNCTION (xapm) {
     php_info_print_table_header(2, "xapm support", "enabled");
     php_info_print_table_end();
 
-    /* Remove comments if you have entries in php.ini
     DISPLAY_INI_ENTRIES();
-    */
 }
 /* }}} */
 

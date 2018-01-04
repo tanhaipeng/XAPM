@@ -30,7 +30,7 @@ extension=xapm.so
 [xapm]
 xapm.server_ip=127.0.0.1  # 服务端IP
 xapm.server_port=8010     # 服务端PORT
-xapm.log_path=/tmp/tarce.log   # 缓冲文件路径
+xapm.log_path=/tmp/trace.log   # 缓冲文件路径
 ```
 
 （4）重启php-fpm
