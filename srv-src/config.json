@@ -1,7 +1,7 @@
 {
   "Port": "8010",
   "MaxSize": 1024,
-  "Logpath": "log/xapmsrv.log",
+  "Logpath": "log/xserver.log",
   "Version": "1.0",
   "Author": {
     "Name": "AllinGoo",

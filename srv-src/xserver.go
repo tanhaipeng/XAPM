@@ -17,7 +17,7 @@ var logger *log.Logger
 
 func init() {
 	conf = initConf("config.json")
-	logger = initLogger(conf.GetString("Logpath", "log/xapmsrv.log"))
+	logger = initLogger(conf.GetString("Logpath", "log/xserver.log"))
 }
 
 func main() {
