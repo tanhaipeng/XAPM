@@ -56,4 +56,4 @@ nohup ./xserver &
 ```
 
 ### Trace效果
-![](screenshot/s1.png)
+![](screenshot/s1.png =400x)
