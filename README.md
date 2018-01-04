@@ -21,7 +21,9 @@
 cd ext-src
 sh build.sh
 ```
+
 （2）module目录下的`xapm.so`文件拷贝到PHP extension目录
+
 （3）php.ini启用扩展，并配置服务端信息
 ```
 extension=xapm.so
@@ -30,6 +32,7 @@ xapm.server_ip=127.0.0.1  # 服务端IP
 xapm.server_port=8010     # 服务端PORT
 xapm.log_path=/tmp/tarce.log   # 缓冲文件路径
 ```
+
 （4）重启php-fpm
 
 #### 服务端
@@ -38,12 +41,14 @@ xapm.log_path=/tmp/tarce.log   # 缓冲文件路径
 cd srv-src
 sh build.sh
 ```
+
 （2）修改`config.json`
 ````
 "Port": "8010"    # 服务端PORT
 "MaxSize": 1024   # 缓冲区大小
 "Logpath": "log/xserver.log"   # 日志路径
 ```
+
 （3）启动xserver
 ```
 #推荐使用supervisor，可以用下面方式测试
