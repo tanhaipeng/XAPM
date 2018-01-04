@@ -33,7 +33,10 @@ xapm.server_port=8010     # 服务端PORT
 xapm.log_path=/tmp/tarce.log   # 缓冲文件路径
 ```
 
+
 （4）重启php-fpm
+
+
 
 #### 服务端
 （1）编译源码
@@ -42,12 +45,14 @@ cd srv-src
 sh build.sh
 ```
 
+
 （2）修改`config.json`
 ````
 "Port": "8010"    # 服务端PORT
 "MaxSize": 1024   # 缓冲区大小
 "Logpath": "log/xserver.log"   # 日志路径
 ```
+
 
 （3）启动xserver
 ```
