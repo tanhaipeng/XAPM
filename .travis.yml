@@ -1,21 +1,21 @@
 matrix:
-  include:
-	- language: go
-	go:
-  	   - 1.8
-  	   - 1.9
-        install:
-	   - go get github.com/go-ozzo/ozzo-config
-	   - go get github.com/go-ozzo/ozzo-log
-	script:
-	   - cd srv-src && sh build.sh
-
-	- language: php
-	php:
-  	   - 7.0
-  	   - 7.1
-	script:
-  	   - cd ext-src && sh build.sh
-
+    include:
+        -
+            language: go
+            go:
+                - 1.8
+                - 1.9
+            install:
+                - go get github.com/go-ozzo/ozzo-config
+                - go get github.com/go-ozzo/ozzo-log
+            script:
+                - cd srv-src && sh build.sh
+        -
+            language: php
+            php:
+                - 7.0
+                - 7.1
+            script:
+                - cd ext-src && sh build.sh
 notifications:
-  email: false
+    email: false
