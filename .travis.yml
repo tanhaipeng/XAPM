@@ -13,8 +13,7 @@ matrix:
         -
             language: php
             php:
-                - 7.0
-                - 7.1
+                - 7.0.25
             script:
                 - cd ext-src && sh build.sh
 notifications:
