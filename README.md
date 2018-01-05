@@ -10,6 +10,7 @@
 ### Trace数据
 * 类/函数(√)
 * 执行耗时(√)
+* 单机调试(√)
 * 代码文件(dev)
 * 代码行号(dev)
 * 输入输出(dev)
@@ -33,6 +34,7 @@ extension=xapm.so
 xapm.server_ip=127.0.0.1  # 服务端IP
 xapm.server_port=8010     # 服务端PORT
 xapm.log_path=/tmp/trace.log   # 缓冲文件路径
+xapm.log_remote=1   # 数据是否远程传输
 ```
 
 （4）重启php-fpm
@@ -59,4 +61,10 @@ nohup ./xserver &
 
 ### Trace效果
 <img src="screenshot/s1.png" width="50%">
+
+### 单机调试
+配置文件php.ini中`xapm.log_remote=0`时，表示数据不传输到远程，日志存储到`xapm.log_path`中，可以运行ext_src下面的format脚本本地调试：
+```
+python ext_src/format.py
+```
 

@@ -36,9 +36,10 @@ ZEND_DECLARE_MODULE_GLOBALS(xapm)
 
 
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("xapm.server_ip",      "172.18.21.69", PHP_INI_ALL, OnUpdateString, server_ip, zend_xapm_globals, xapm_globals)
+    STD_PHP_INI_ENTRY("xapm.server_ip",      "127.0.0.1", PHP_INI_ALL, OnUpdateString, server_ip, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.server_port",      "8010", PHP_INI_ALL, OnUpdateLong, server_port, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.log_path",      "/tmp/trace.log", PHP_INI_ALL, OnUpdateString, log_path, zend_xapm_globals, xapm_globals)
+    STD_PHP_INI_ENTRY("xapm.log_remote",      "0", PHP_INI_ALL, OnUpdateLong, log_remote, zend_xapm_globals, xapm_globals)
 PHP_INI_END()
 
 
@@ -122,12 +123,10 @@ PHP_RINIT_FUNCTION (xapm) {
  */
 PHP_RSHUTDOWN_FUNCTION (xapm) {
     write_log("xapm_trace_end", 0);
-    //php_printf("xapm_trace_end\n");
-
     // 复杂性的计算放到server处理
-    php_printf("data_transfer_start\n");
     char *ret = read_log();
-    if (ret) {
+    if (ret && XAPM_G(log_remote)) {
+        php_printf("data_transfer_start\n");
         // 发送到服务器
         int sock = create_socket(XAPM_G(server_ip), XAPM_G(server_port));
         write(sock, ret, buf_size);
@@ -136,8 +135,8 @@ PHP_RSHUTDOWN_FUNCTION (xapm) {
         FILE *pFile = fopen(XAPM_G(log_path), "w");
         fclose(pFile);
         free(ret);
+        php_printf("data_transfer_end\n");
     }
-    php_printf("data_transfer_end\n");
     return SUCCESS;
 }
 /* }}} */

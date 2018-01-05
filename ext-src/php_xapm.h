@@ -47,6 +47,7 @@ ZEND_BEGIN_MODULE_GLOBALS(xapm)
     zend_long server_port;
     char *server_ip;
     char *log_path;
+    int log_remote;
 ZEND_END_MODULE_GLOBALS(xapm)
 
 
