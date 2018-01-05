@@ -10,15 +10,15 @@ matrix:
                 - go get github.com/go-ozzo/ozzo-log
             script:
                 - cd srv-src && sh build.sh
-        -
-            language: php
-            php:
-                - 7.0.25
-            script:
-                - cd ext-src && sh build.sh
+       # -
+       #     language: php
+       #     php:
+       #         - 7.0.25
+       #     script:
+       #         - cd ext-src && sh build.sh
 
-env:
-   - REPORT_EXIT_STATUS=1 NO_INTERACTION=1
+#env:
+#   - REPORT_EXIT_STATUS=1 NO_INTERACTION=1
 
 notifications:
     email: false
