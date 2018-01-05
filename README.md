@@ -1,4 +1,8 @@
 [![Build Status](https://travis-ci.org/tanhaipeng/XAPM.svg?branch=master)](https://travis-ci.org/tanhaipeng/XAPM)
+![](https://img.shields.io/badge/platform-Linux-green.svg)
+![](https://img.shields.io/badge/language-C-blue.svg)
+![](https://img.shields.io/badge/language-Go-blue.svg)
+![](https://img.shields.io/badge/license-Apache-000000.svg)
 
 ## XAPM : An extension for PHP Trace
 
