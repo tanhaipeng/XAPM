@@ -6,7 +6,7 @@
 
 ### XAPM架构
 扩展端(xapm)负责收集底层性能数据，缓存成文件形式，每隔一段时间通过TCP协议传输到服务端(xserver)，服务端解析trace数据，排序组合成结构化信息输出&持久化存储。
-<img src="screenshot/s2.png">
+<img src="screenshot/s2.png" width="80%">
 
 ### Trace数据
 * 类/函数(√)
