@@ -36,7 +36,7 @@ ZEND_DECLARE_MODULE_GLOBALS(xapm)
 
 
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("xapm.server_ip",      "127.0.0.1", PHP_INI_ALL, OnUpdateString, server_ip, zend_xapm_globals, xapm_globals)
+    STD_PHP_INI_ENTRY("xapm.server_ip",      "172.18.21.69", PHP_INI_ALL, OnUpdateString, server_ip, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.server_port",      "8010", PHP_INI_ALL, OnUpdateLong, server_port, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.log_path",      "/tmp/trace.log", PHP_INI_ALL, OnUpdateString, log_path, zend_xapm_globals, xapm_globals)
 PHP_INI_END()
@@ -89,7 +89,8 @@ PHP_MINIT_FUNCTION (xapm) {
     // replace hook execute
     zend_execute_ex = xapm_execute_ex;
     zend_execute_internal = xapm_execute_internal;
-
+    // get request logid
+    logid = get_request_logid();
     return SUCCESS;
 }
 /* }}} */
@@ -252,7 +253,7 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
     return NULL;
 }
 
-static inline int create_socket(char *ip, int port) {
+static int create_socket(char *ip, int port) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -263,10 +264,16 @@ static inline int create_socket(char *ip, int port) {
     return sock;
 }
 
-static inline long pt_time_msec() {
+static long pt_time_msec() {
     struct timeval tv;
     gettimeofday(&tv, 0);
     return (long) (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+static long get_request_logid() {
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return (long) (tv.tv_sec * 1000000 + tv.tv_usec);
 }
 
 void write_log(char *log_info, int type) {

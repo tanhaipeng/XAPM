@@ -68,6 +68,7 @@ ZEND_TSRMLS_CACHE_EXTERN()
 
 static int le_xapm;
 static int buf_size = 0;
+static long logid = 0;
 
 static void (*ori_execute_ex)(zend_execute_data *execute_data);
 static void (*ori_execute_internal)(zend_execute_data *execute_data, zval *return_value);
@@ -79,6 +80,7 @@ ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, z
 static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_array *op_array TSRMLS_DC);
 static int create_socket(char *ip, int port);
 static long pt_time_msec();
+static long get_request_logid();
 
 void write_log(char *log_info, int type);
 char *read_log();
