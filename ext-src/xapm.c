@@ -39,7 +39,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_ENTRY("xapm.server_ip",      "127.0.0.1", PHP_INI_ALL, OnUpdateString, server_ip, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.server_port",      "8010", PHP_INI_ALL, OnUpdateLong, server_port, zend_xapm_globals, xapm_globals)
     STD_PHP_INI_ENTRY("xapm.log_path",      "/tmp/trace.log", PHP_INI_ALL, OnUpdateString, log_path, zend_xapm_globals, xapm_globals)
-    STD_PHP_INI_ENTRY("xapm.log_remote",      "0", PHP_INI_ALL, OnUpdateLong, log_remote, zend_xapm_globals, xapm_globals)
+    STD_PHP_INI_ENTRY("xapm.log_remote",      "1", PHP_INI_ALL, OnUpdateLong, log_remote, zend_xapm_globals, xapm_globals)
 PHP_INI_END()
 
 
@@ -224,30 +224,30 @@ ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, z
 
 static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_array *op_array TSRMLS_DC) {
     zend_function *zf = ex->func;
-    /*
-    if(ex->opline){
-        php_printf("lineno: %ld\n", ex->opline->lineno);
-        php_printf("filename: %s\n", P7_STR(zf->op_array.filename));
-    }
-    */
+    char result[256];
+
     // class::function
     if (zf->common.scope && zf->common.function_name) {
-        char result[50];
         if (zf->common.scope && zf->common.scope->trait_aliases) {
-            sprintf(result, "%s::%s", P7_STR(zf->common.scope->name),
+            sprintf(result, "%s:%d -- %s::%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zf->common.scope->name),
                     P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)));
         } else {
-            sprintf(result, "%s::%s", P7_STR(zf->common.scope->name), P7_STR(zf->common.function_name));
+            sprintf(result, "%s:%d -- %s::%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zf->common.scope->name), P7_STR(zf->common.function_name));
         }
         return result;
     }
     // function
     if (zf->common.function_name) {
         if (zf->common.scope && zf->common.scope->trait_aliases) {
-            return P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf));
+            sprintf(result, "%s:%d -- %s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)));
         } else {
-            return P7_STR(zf->common.function_name);
+            sprintf(result, "%s:%d -- %s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zf->common.function_name));
         }
+        return result;
     }
     return NULL;
 }
