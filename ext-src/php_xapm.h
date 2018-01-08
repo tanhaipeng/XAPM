@@ -82,6 +82,7 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
 static int create_socket(char *ip, int port);
 static long pt_time_msec();
 static long get_request_logid();
+static char* repr_zval(zval *zv, int limit TSRMLS_DC);
 
 void write_log(char *log_info, int type);
 char *read_log();

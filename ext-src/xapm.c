@@ -225,6 +225,28 @@ ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, z
 static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_array *op_array TSRMLS_DC) {
     zend_function *zf = ex->func;
     char result[256];
+    int arg_count = 0;
+    int i = 0;
+
+    arg_count = ZEND_CALL_NUM_ARGS(ex);
+    if(arg_count){
+        zval *p = ZEND_CALL_ARG(ex, 1);
+        if (ex->func->type == ZEND_USER_FUNCTION) {
+            uint32_t first_extra_arg = ex->func->op_array.num_args;
+
+            if (first_extra_arg && arg_count > first_extra_arg) {
+                while (i < first_extra_arg) {
+                    php_printf("%s\n", repr_zval(p++, 32));
+                    i++;
+                }
+                p = ZEND_CALL_VAR_NUM(ex, ex->func->op_array.last_var + ex->func->op_array.T);
+            }
+        }
+        while(i < arg_count) {
+            php_printf("%s\n", repr_zval(p++, 32));
+            i++;
+        }
+    }
 
     // class::function
     if (zf->common.scope && zf->common.function_name) {
@@ -248,6 +270,28 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
                     P7_STR(zf->common.function_name));
         }
         return result;
+    }
+    return NULL;
+}
+
+
+static char* repr_zval(zval *zv, int limit TSRMLS_DC) {
+    char buf[100];
+    switch (Z_TYPE_P(zv)) {
+        case IS_STRING:
+            return Z_STRVAL_P(zv);
+        case IS_TRUE:
+            return "true";
+        case IS_FALSE:
+            return "false";
+        case IS_LONG:
+            snprintf(buf, sizeof(buf), "%ld", Z_LVAL_P(zv));
+            return buf;
+        case IS_DOUBLE:
+            snprintf(buf, sizeof(buf), "%.*G", (int) EG(precision), Z_DVAL_P(zv));
+            return buf;
+        default:
+            return NULL;
     }
     return NULL;
 }
