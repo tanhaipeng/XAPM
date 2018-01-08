@@ -47,6 +47,8 @@ xapm.log_remote=1   # 数据是否远程传输
 #### 服务端
 （1）编译源码
 ```
+go get github.com/go-ozzo/ozzo-log
+go get github.com/go-ozzo/ozzo-config
 cd srv-src
 sh build.sh
 ```
