@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+message DataType {
+    required int32 logid = 1;
+    required string function = 2;
+    required int32 cost = 3;
+    optional int32 lineno = 4;
+    optional string filename = 5;
+    optional string input = 6;
+    optional string return = 7;
+}
+
+message TraceType {
+    repeated DataType trace = 1;
+}

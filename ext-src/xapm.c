@@ -31,6 +31,7 @@
 #include "unistd.h"
 #include "sys/socket.h"
 #include "arpa/inet.h"
+#include "tdata.pb-c.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(xapm)
 
@@ -343,6 +344,16 @@ static long get_request_logid() {
 }
 
 void write_log(char *log_info, int type) {
+
+    void *buf;
+    unsigned len;
+    DataType fdata= DATA_TYPE__INIT;
+    fdata.lineno = 10;
+    len = data_type__get_packed_size(&fdata);
+    buf = malloc(len);
+    data_type__pack(&fdata, buf);
+    free(buf);
+
     time_t timer;
     char buffer[26];
     struct tm *tm_info;
