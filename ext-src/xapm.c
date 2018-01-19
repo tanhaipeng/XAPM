@@ -220,14 +220,25 @@ ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, z
         inc_time = pt_time_msec() - inc_time;
         write_log(inc_time, 1);
     }
+
+    // return value
+    if(return_value) {
+        php_printf("ret: %s\n", repr_zval(return_value));
+    }else{
+        if (execute_data->return_value) {
+            php_printf("ret: %s\n", repr_zval(execute_data->return_value));
+        }
+    }
 }
 
 static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_array *op_array TSRMLS_DC) {
     zend_function *zf = ex->func;
+    zval retval;
     char result[256];
     int arg_count = 0;
     int i = 0;
-
+    char *argc_tmp = NULL;
+    char *argc_list[20];
     arg_count = ZEND_CALL_NUM_ARGS(ex);
     if(arg_count){
         zval *p = ZEND_CALL_ARG(ex, 1);
@@ -236,16 +247,28 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
 
             if (first_extra_arg && arg_count > first_extra_arg) {
                 while (i < first_extra_arg) {
-                    php_printf("%s\n", repr_zval(p++, 32));
+                    argc_tmp = repr_zval(p++);
+                    if(argc_tmp) {
+                        argc_list[i] = argc_tmp;
+                    }
                     i++;
                 }
                 p = ZEND_CALL_VAR_NUM(ex, ex->func->op_array.last_var + ex->func->op_array.T);
             }
         }
         while(i < arg_count) {
-            php_printf("%s\n", repr_zval(p++, 32));
+            argc_tmp = repr_zval(p++);
+            if(argc_tmp) {
+                argc_list[i] = argc_tmp;
+            }
             i++;
         }
+
+        // input argc
+        for(i=0;i<arg_count;i++){
+            php_printf("%s_", argc_list[i]);
+        }
+        php_printf("\n");
     }
 
     // class::function
@@ -275,7 +298,7 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
 }
 
 
-static char* repr_zval(zval *zv, int limit TSRMLS_DC) {
+static char* repr_zval(zval *zv) {
     char buf[100];
     switch (Z_TYPE_P(zv)) {
         case IS_STRING:
