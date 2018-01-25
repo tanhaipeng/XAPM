@@ -1,6 +1,6 @@
 {
   "Port": "8010",
-  "MaxSize": 1024,
+  "MaxSize": 4096,
   "Logpath": "log/xserver.log",
   "Version": "1.0",
   "Author": {

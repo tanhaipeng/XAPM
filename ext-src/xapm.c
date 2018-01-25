@@ -114,7 +114,7 @@ PHP_RINIT_FUNCTION (xapm) {
 #if defined(COMPILE_DL_XAPM) && defined(ZTS)
     ZEND_TSRMLS_CACHE_UPDATE();
 #endif
-    write_log("xapm_trace_start", 0);
+    write_log("xapm_trace_start", 0, 1);
     return SUCCESS;
 }
 /* }}} */
@@ -123,7 +123,7 @@ PHP_RINIT_FUNCTION (xapm) {
 /* {{{ PHP_RSHUTDOWN_FUNCTION
  */
 PHP_RSHUTDOWN_FUNCTION (xapm) {
-    write_log("xapm_trace_end", 0);
+    write_log("xapm_trace_end", 0, 1);
     // 复杂性的计算放到server处理
     char *ret = read_log();
     if (ret && XAPM_G(log_remote)) {
@@ -198,9 +198,9 @@ ZEND_API void xapm_execute_internal(zend_execute_data *execute_data, zval *retur
 ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, zval *return_value) {
     /* class and function name */
     char *func_name = get_function(internal, execute_data, NULL TSRMLS_CC);
-
     if (func_name) {
-        write_log(func_name, 0);
+        //php_printf("%s\n", func_name);
+        write_log(func_name, 0, 1);
     }
 
     long inc_time = pt_time_msec();
@@ -215,20 +215,18 @@ ZEND_API void xapm_execute_core(int internal, zend_execute_data *execute_data, z
     } else {
         ori_execute_ex(execute_data);
     }
-
-    // printf inc_time
-    if (func_name) {
-        inc_time = pt_time_msec() - inc_time;
-        write_log(inc_time, 1);
-    }
-
-    // return value
+    /*
     if(return_value) {
-        php_printf("ret: %s\n", repr_zval(return_value));
+        php_printf("ret:%s\n", repr_zval(return_value));
     }else{
         if (execute_data->return_value) {
-            php_printf("ret: %s\n", repr_zval(execute_data->return_value));
+            php_printf("ret:%s\n", repr_zval(execute_data->return_value));
         }
+    }
+    */
+    if (func_name) {
+        inc_time = pt_time_msec() - inc_time;
+        write_log(inc_time, 1, 1);
     }
 }
 
@@ -236,6 +234,7 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
     zend_function *zf = ex->func;
     zval retval;
     char result[256];
+    char input[128] = "";
     int arg_count = 0;
     int i = 0;
     char *argc_tmp = NULL;
@@ -264,34 +263,37 @@ static long get_function(zend_bool internal, zend_execute_data *ex, zend_op_arra
             }
             i++;
         }
-
         // input argc
         for(i=0;i<arg_count;i++){
-            php_printf("%s_", argc_list[i]);
+            if(i==0){
+                strcpy(input,argc_list[i]);
+            }else{
+                strcat(input, "|");
+                strcat(input, argc_list[i]);
+            }
         }
-        php_printf("\n");
     }
 
     // class::function
     if (zf->common.scope && zf->common.function_name) {
         if (zf->common.scope && zf->common.scope->trait_aliases) {
-            sprintf(result, "%s:%d -- %s::%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+            sprintf(result, "%s:%d*%s::%s*%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
                     P7_STR(zf->common.scope->name),
-                    P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)));
+                    P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)),input);
         } else {
-            sprintf(result, "%s:%d -- %s::%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
-                    P7_STR(zf->common.scope->name), P7_STR(zf->common.function_name));
+            sprintf(result, "%s:%d*%s::%s*%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zf->common.scope->name), P7_STR(zf->common.function_name),input);
         }
         return result;
     }
     // function
     if (zf->common.function_name) {
         if (zf->common.scope && zf->common.scope->trait_aliases) {
-            sprintf(result, "%s:%d -- %s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
-                    P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)));
+            sprintf(result, "%s:%d*%s*%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zend_resolve_method_name(P7_EX_OBJ(ex) ? P7_EX_OBJCE(ex) : zf->common.scope, zf)),input);
         } else {
-            sprintf(result, "%s:%d -- %s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
-                    P7_STR(zf->common.function_name));
+            sprintf(result, "%s:%d*%s*%s", zend_get_executed_filename(TSRMLS_C), zend_get_executed_lineno(TSRMLS_C),
+                    P7_STR(zf->common.function_name),input);
         }
         return result;
     }
@@ -343,17 +345,7 @@ static long get_request_logid() {
     return (long) (tv.tv_sec * 1000000 + tv.tv_usec);
 }
 
-void write_log(char *log_info, int type) {
-
-    void *buf;
-    unsigned len;
-    DataType fdata= DATA_TYPE__INIT;
-    fdata.lineno = 10;
-    len = data_type__get_packed_size(&fdata);
-    buf = malloc(len);
-    data_type__pack(&fdata, buf);
-    free(buf);
-
+void write_log(char *log_info, int type, int newline) {
     time_t timer;
     char buffer[26];
     struct tm *tm_info;
@@ -365,7 +357,12 @@ void write_log(char *log_info, int type) {
     if (pFile) {
         switch (type) {
             case 0:
-                fprintf(pFile, "%s\t%s\n", buffer, log_info);
+                if(newline){
+                    fprintf(pFile, "%s\t%s\n", buffer, log_info);
+                }
+                else{
+                    fprintf(pFile, "%s\t%s", buffer, log_info);
+                }
                 break;
             case 1:
                 fprintf(pFile, "%s\t%ld\n", buffer, log_info);

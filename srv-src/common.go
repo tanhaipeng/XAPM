@@ -158,7 +158,20 @@ func formatApmData(data string) {
 			var step stepType
 			k, v := getKey(item)
 			json.Unmarshal([]byte(k), &step)
-			fmt.Println(step.Name, v, "ms")
+			fmt.Println(extractDetail(step.Name), v, "ms")
 		}
 	}
+}
+
+/* 提取详细信息 */
+func extractDetail(detail string) string {
+	retval := ""
+	infoList := strings.Split(detail, "*")
+	if len(infoList) >= 2 {
+		retval += infoList[0] + "\t" + infoList[1]
+		if len(infoList) >= 3 {
+			retval += "\t" + infoList[2]
+		}
+	}
+	return retval
 }

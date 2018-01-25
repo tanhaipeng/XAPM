@@ -84,7 +84,7 @@ static long pt_time_msec();
 static long get_request_logid();
 static char* repr_zval(zval *zv);
 
-void write_log(char *log_info, int type);
+void write_log(char *log_info, int type, int newline);
 char *read_log();
 
 #endif    /* PHP_XAPM_H */
