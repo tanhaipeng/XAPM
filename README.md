@@ -68,7 +68,7 @@ nohup ./xserver &
 ```
 
 ### Trace效果
-<img src="screenshot/s3.png" width="50%">
+<img src="screenshot/s3.png" width="90%">
 
 ### 单机调试
 配置文件php.ini中`xapm.log_remote=0`时，表示数据不传输到远程，日志存储到`xapm.log_path`中，可以运行ext_src下面的format脚本本地调试：
