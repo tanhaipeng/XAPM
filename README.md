@@ -57,7 +57,7 @@ sh build.sh
 （2）修改`config.json`
 ```
 "Port": "8010"    # 服务端PORT
-"MaxSize": 1024   # 缓冲区大小
+"MaxSize": 4096   # 缓冲区大小
 "Logpath": "log/xserver.log"   # 日志路径
 ```
 
