@@ -61,8 +61,20 @@ def map_trace(trace):
     for elem in sorts:
         key = elem.keys()[0]
         val = elem.values()[0]
-        result.append(json.loads(key).keys()[0] + ": " + str(val) + "ms")
+        result.append(split_detail(json.loads(key).keys()[0]) + "\t" + str(val) + "ms")
     return result
+
+
+def split_detail(detail):
+    """
+    split detail
+    :param detail:
+    :return:
+    """
+    info_list = detail.split("*")
+    if len(info_list) >= 2:
+        return "\t".join(info_list)
+    return ""
 
 
 def cmp_trace(x, y):
